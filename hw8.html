@@ -1,0 +1,441 @@
+<html>
+    <head>
+        <title>Forecast</title>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+        <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
+        <script src="hw8.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.10.6/moment.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/moment-timezone/0.4.1/moment-timezone-with-data.js"></script>
+        
+        <script src="http://openlayers.org/api/OpenLayers.js"></script>
+	    <script src= "http://svn.osgeo.org/metacrs/proj4js/trunk/lib/proj4js-combined.js"></script>
+
+        <style>
+     .spaceClass
+            {
+                padding:0.3%;
+            } 
+      .btnPadding
+            {
+                padding-top:1.7%;
+            }
+        label
+            {
+                color:white;
+            }
+        .nav-pills a {
+			color: blue;
+			background-color:white;
+		}
+         .tab2bg{
+             color:white;  
+         }
+           
+        body
+        {
+            border:0;
+            background: transparent url('http://cs-server.usc.edu:45678/hw/hw8/images/bg.jpg') no-repeat top center fixed;
+            background-size: 50% 50%;
+            background-repeat: no-repeat;
+            background-size: cover;
+            width: 100%;
+            height: 100%;
+            -moz-background-size: cover;
+        }
+        .panel
+            {
+                margin-bottom: 0px;
+            }
+            
+        .panel-group{
+            text-align: right;
+        }
+        #tmpdeg
+            {
+                text-align:center;
+                font-weight: bold;
+                font-size: 14px;
+                color:white;
+                background-color: #337AB7;
+                margin-top: 6px;
+                margin-bottom: 6px;
+                word-wrap:break-word;
+                width:17%;
+            }
+            
+         #tme
+            {
+                text-align:center;
+                font-weight: bold;
+                font-size: 14px;
+                color:white;
+                background-color: #337AB7;
+                margin-top: 6px;
+                margin-bottom: 6px;
+                width:17%;
+            }
+            
+             #summ
+            {
+                text-align:center;
+                font-weight: bold;
+                font-size: 14px;
+                color:white;
+                background-color: #337AB7;
+                margin-top: 6px;
+                margin-bottom: 6px;
+                width:24%;
+            }
+              #vdet
+            {
+                text-align:center;
+                font-weight: bold;
+                font-size: 14px;
+                color:white;
+                background-color: #337AB7;
+                margin-top: 6px;
+                margin-bottom: 6px;
+                width: 24%;
+            }
+            #ccovr 
+            {
+                text-align:center;
+                font-weight: bold;
+                font-size: 14px;
+                color:white;
+                background-color: #337AB7;
+                margin-top: 6px;
+                margin-bottom: 6px;
+            }
+            .panel-collapse
+            {
+                background-color:#f5f5f5;
+            }
+            .panel-title{
+                font-size: 13px;
+            }
+            .paddingClassZero{
+	           padding: 0%;
+	           border-radius: 7px;
+            }
+
+            .paddingClassUi{
+	           padding: 0.5%;
+            }
+            
+        </style>
+        <script type='text/javascript'>
+</script>
+    </head>
+    <body>
+        <div class="container">
+        <h1 align='center'>Forecast Search</h1>
+        
+            <div class="panel panel-body" style="background-color: rgba(0, 0, 0, 0.3);">
+                
+            <form role="form" name="myform" action="hw8.php" method="POST">
+            
+            <div class="form-group col-md-3 spaceClass">
+            <label for="addr">Street Address:<font color="red">*</font></label><br>
+            <input type="text" class="form-control" id="addr" placeholder="Enter the street address">
+            <font color="red">
+            <span id="addrError" style="visibility:hidden">Please enter the street address</span> </font>
+            </div>
+              
+             
+            <div class="form-group col-md-2 spaceClass">
+            <label for="city">City:<font color="red">*</font></label><br>
+            <input type="text" class="form-control" id="city" placeholder="Enter the city name">
+             <font color="red">
+                 <span id="cityError" style="visibility:hidden">Please enter the city</span> </font>
+                </font>
+            </div>
+           
+        <div class="form-group col-md-2 spaceClass">
+        <label for="sel1">State:<font color="red">*</font></label><br>
+        <select class="form-control" name="state" id="state">
+                <option value="" name="empty">Select your State</option>		
+				<option value="AL">Alabama</option>
+				<option value="AK">Alaska</option>
+				<option value="AZ">Arizona</option>
+				<option value="AR">Arkansas</option>
+				<option value="CA">California</option>
+				<option value="CO">Colorado</option>
+				<option value="CT">Connecticut</option>
+				<option value="DE">Detroit</option>
+				<option value="DC">District of Columbia</option>
+				<option value="FL">Florida</option>
+
+				<option value="GA">Georgia</option>
+				<option value="HI">Hawaii</option>
+				<option value="ID">Idaho</option>
+				<option value="IL">Illinois</option>
+				<option value="IN">Indiana</option>
+				<option value="IA">Iowa</option>
+				<option value="KS">Kansas</option>
+				<option value="KY">Kentucky</option>
+				<option value="LA">Louisana</option>
+				<option value="ME">Maine</option>
+
+				<option value="MD">Maryland</option>
+				<option value="MA">Massachusetts</option>
+				<option value="MI">Michigan</option>
+				<option value="MN">Minnesotta</option>
+				<option value="MS">Mississippi</option>
+				<option value="MO">Missouri</option>
+				<option value="MT">Montana</option>
+				<option value="NE">Nebraska</option>
+				<option value="NV">Nevada</option>
+				<option value="NH">New Hampshire</option>
+
+				<option value="NJ">New Jersey</option>
+				<option value="NM">New Mexico</option>
+				<option value="NY">New York</option>
+				<option value="NC">North Carolina</option>
+				<option value="ND">North Dakota</option>
+				<option value="OH">Ohio</option>
+				<option value="OK">Oklahoma</option>
+				<option value="OR">Oregon</option>
+				<option value="PA">Pennsylvania</option>
+				<option value="RI">Rhode Island</option>
+	
+				<option value="SC">South Carolina</option>
+				<option value="SD">South Dakota</option>
+				<option value="TN">Tennessee</option>
+				<option value="TX">Texas</option>
+				<option value="UT">Utah</option>
+				<option value="VT">Vermont</option>
+				<option value="VA">Virginia</option>
+				<option value="WA">Washington</option>
+				<option value="WV">West Virginia</option>
+				<option value="WC">Wisconsin</option>
+				<option value="WY">Wyoming</option>
+			</select>
+            <font color="red">
+                <span id="stateError" style="visibility:hidden">Please enter state</span> </font>
+  </div>
+ 
+    <div class="form-group col-md-2 spaceClass">
+              <label for="temp">Degrees:<font color="red">*</font></label><br>
+  <label class="radio-inline"><input type="radio" name="temp" id="fahr" value="fahrenheit" checked>Fahrenheit</label>
+              <label class="radio-inline"><input type="radio" id="cel" name="temp" value="celsius">Celsius</label>
+              </div>
+    
+              <div class="form-group col-md-offset-1 col-md-2 btnPadding" style="text-align:right">
+                  
+                <button type="button" class="btn btn-primary btn-sm" name="search" id="search" value="Search">
+                    <span class="glyphicon glyphicon-search"></span> Search
+                </button>
+                  
+              <button type="button" class="btn btn-default btn-sm" name="clear" value="Clear" id="clear">
+                <span class="glyphicon glyphicon-refresh"></span> Clear
+              </button>       
+              </div>
+              <div class="col-md-offset-9 col-md-3" style="text-align:right">
+                
+                  <label style="font-weight:400">Powered by:</label><a href="https://forecast.io" target="_blank"><img src="http://cs-server.usc.edu:45678/hw/hw8/images/forecast_logo.png" width=75px height=40px></img></a></div> 
+              </div>        
+     </form>
+        <hr></div>  
+    </div>
+  <div class="container" id="navid" style='visibility:hidden'>
+    <ul class="nav nav-pills responsive" >
+            <li class="active"><a data-toggle="pill" href="#right_now" style='font-size:12px'>Right Now</a></li>
+			<li><a data-toggle="pill" href="#next24" style='font-size:12px'>Next 24 Hours</a></li>
+			<li><a data-toggle="pill" href="#next7" style='font-size:12px'>Next 7 Days</a></li>
+    </ul>
+      
+      <div class="tab-content">
+       			<div id="right_now" class="tab-pane fade in active">
+					<div id = "firsttab_table" class="form-group col-lg-6">
+					</div>	
+					<div id="basicMap" style="height:430px" class="form-group col-lg-6" >
+					</div>
+				</div>
+                <div id="next24" class="tab-pane fade" style='background-color:white'>
+                    <div class='row' style="margin-left:0%;margin-right:0%" >
+                    <div class='col-md-12 col-sm-12 col-xs-12' style="padding-left:0%;padding-right:0%;margin-left:0%;margin-right:0%;background-color:#337AB7">
+                        <div class='col-md-2 col-sm-2 col-xs-2' id='tme'>Time</div>
+                        <div class='col-md-3 col-sm-3 col-xs-3' id='summ'>Summary</div>
+                        <div class='col-md-2 col-sm-2 col-xs-2' id='ccovr'>Cloud Cover</div>
+                        <div class='col-md-2 col-sm-2 col-xs-2' id='tmpdeg'>Temp</div>
+                        <div class='col-md-3 col-sm-3 col-xs-3' id='vdet'>View Details</div>
+                    </div>    
+                    </div>  
+                    <div class="panel-group" id="accordion">
+                     </div>
+			             </div>
+			   <div id="next7" class="tab-pane fade" style="background-color: #2C2D2E">
+			    
+                   	  <div class="row container-fluid">
+				<div class="col-md-1 col-md-offset-2" style="padding:0.5%">
+					<!-- Button trigger modal -->
+					<button type="button" id="button1"  class="btn btn-lg paddingClassZero" style="background-color:#367DB5;color:white;padding:0%;width:100%;" data-toggle="modal" data-target="#myModal1">
+					  
+					</button>
+
+					<!-- Modal -->
+					<div class="modal fade" id="myModal1" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+					  <div class="modal-dialog" role="document">
+						<div class="modal-content">
+						  <div class="modal-header" id="myModalHeader1">
+							<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+							<h4 class="modal-title" id="myModalLabel1">Modal title</h4>
+						  </div>
+						  <div class="modal-body" id="myModalBody1">
+							...
+						  </div>
+						  <div class="modal-footer">
+							<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+						  </div>
+						</div>
+					  </div>
+					</div>
+				</div>
+			<div class="col-md-1 paddingClassUi">
+				<!-- Button trigger modal -->
+				<button type="button" id="button2" class="btn btn-lg paddingClassZero" style="background-color:#EC4444;color:white;padding:0%;width:100%;" data-toggle="modal" data-target="#myModal2">
+				</button>
+
+				<!-- Modal -->
+				<div class="modal fade" id="myModal2" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+				  <div class="modal-dialog" role="document">
+					<div class="modal-content">
+					  <div class="modal-header" id="myModalHeader2">
+						<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+						<h4 class="modal-title" id="myModalLabel2">Modal title</h4>
+					  </div>
+					  <div class="modal-body" id="myModalBody2">
+						...
+					  </div>
+					  <div class="modal-footer">
+						<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+					  </div>
+					</div>
+				  </div>
+				</div>
+			</div>
+			<div class="col-md-1 paddingClassUi">
+				<!-- Button trigger modal -->
+				<button type="button" id="button3" class="btn btn-lg paddingClassZero" style="background-color:#E68E4F;color:white;padding:0%;width:100%;" data-toggle="modal" data-target="#myModal3">
+				
+				</button>
+				<div class="modal fade" id="myModal3" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+				  <div class="modal-dialog" role="document">
+					<div class="modal-content">
+					  <div class="modal-header" id="myModalHeader3">
+						<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+						<h4 class="modal-title" id="myModalLabel3">Modal title</h4>
+					  </div>
+					  <div class="modal-body" id="myModalBody3">
+						...
+					  </div>
+					  <div class="modal-footer">
+						<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+					  </div>
+					</div>
+				  </div>
+				</div>
+			</div>
+			<div class="col-md-1 paddingClassUi">
+				<!-- Button trigger modal -->
+				<button type="button" id="button4"  class="btn btn-lg paddingClassZero" style="background-color:#A7A439;color:white;padding:0%;width:100%;" data-toggle="modal" data-target="#myModal4">
+				 
+				</button>
+
+				<div class="modal fade" id="myModal4" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+				  <div class="modal-dialog" role="document">
+					<div class="modal-content">
+					  <div class="modal-header" id="myModalHeader4">
+						<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+						<h4 class="modal-title" id="myModalLabel4">Modal title</h4>
+					  </div>
+					  <div class="modal-body" id="myModalBody4">
+						.
+					  </div>
+					  <div class="modal-footer">
+						<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+					  </div>
+					</div>
+				  </div>
+				</div>
+			</div>
+			<div class="col-md-1 paddingClassUi">
+				<!-- Button trigger modal -->
+				<button type="button" id="button5" class="btn btn-lg paddingClassZero" style="background-color:#9770A7;color:white;padding:0%;width:100%;" data-toggle="modal" data-target="#myModal5">
+				
+				</button>
+
+				<div class="modal fade" id="myModal5" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+				  <div class="modal-dialog" role="document">
+					<div class="modal-content">
+					  <div class="modal-header" id="myModalHeader5">
+						<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+						<h4 class="modal-title" id="myModalLabel5">Modal title</h4>
+					  </div>
+					  <div class="myModalbody" id="myModalBody5">
+						...
+					  </div>
+					  <div class="modal-footer">
+						<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+					  </div>
+					</div>
+				  </div>
+				</div>
+			</div>
+			<div class="col-md-1 paddingClassUi">
+				<!-- Button trigger modal -->
+				<button type="button" id="button6" class="btn btn-lg paddingClassZero" style="background-color:#F37C7E;color:white;padding:0%;width:100%;" data-toggle="modal" data-target="#myModal6">
+				  modal
+				</button>
+
+				<div class="modal fade" id="myModal6" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+				  <div class="modal-dialog" role="document">
+					<div class="modal-content">
+					  <div class="modal-header" id="myModalHeader6">
+						<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+						<h4 class="modal-title" id="myModalLabel6">Modal title</h4>
+					  </div>
+					  <div class="myModalbody" id="myModalBody6">
+						...
+					  </div>
+					  <div class="modal-footer">
+						<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+					  </div>
+					</div>
+				  </div>
+				</div>
+			</div>
+			<div class="col-md-1 paddingClassUi">
+				<!-- Button trigger modal -->
+				<button type="button" id="button7" class="btn btn-lg paddingClassZero" style="background-color:#CE4571;color:white;padding:0%;width:100%;" data-toggle="modal" data-target="#myModal7">
+				  modal
+				</button>
+				<div class="modal fade" id="myModal7" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+				  <div class="modal-dialog" role="document">
+					<div class="modal-content">
+					  <div class="modal-header" id="myModalHeader7">
+						<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+						<h4 class="modal-title" id="myModalLabel7">Modal title</h4>
+					  </div>
+					  <div class="myModalbody" id="myModalBody7">
+						...
+					  </div>
+					  <div class="modal-footer">
+						<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+					  </div>
+					</div>
+				  </div>
+				</div>
+			</div>
+      </div>
+			   </div>
+      </div>
+      </div>
+
+    </NOSCRIPT>
+    </body>
+</html>
